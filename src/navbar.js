@@ -2,8 +2,8 @@
  * Created by ZT on 2017/6/6.
  */
 import React from 'react';
-import { Navbar, Nav, FormControl, FormGroup, NavItem} from 'react-bootstrap';
-
+import { Navbar, Nav, FormControl, FormGroup, NavItem, Glyphicon} from 'react-bootstrap';
+import './navbar.css'
 export default class MyNavbar extends React.Component {
     constructor(props) {
         super(props);
@@ -14,7 +14,7 @@ export default class MyNavbar extends React.Component {
             <Navbar>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="#">爱看图</a>
+                        <a href="#">Project-P</a>
                     </Navbar.Brand>
                     <Navbar.Toggle />
                 </Navbar.Header>
@@ -27,7 +27,9 @@ export default class MyNavbar extends React.Component {
                         </Navbar.Form>
                     </Nav>
                     <Nav pullRight>
-                        <NavItem eventKey={1} href="#">Link Right</NavItem>
+                        <NavItem ><Glyphicon glyph="tags" className="glyph-bigger" /></NavItem>
+                        <NavItem ><Glyphicon glyph="user" className="glyph-bigger" /></NavItem>
+                        <NavItem ><Glyphicon glyph="envelope" className="glyph-bigger" /></NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
