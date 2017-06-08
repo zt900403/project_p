@@ -8,7 +8,7 @@ export default class MyNavbar extends React.Component {
 
     render() {
         return (
-            <Navbar>
+            <Navbar className="my-navbar">
                 <Navbar.Header>
                     <Navbar.Brand>
                         <a href="#">Project-P</a>
