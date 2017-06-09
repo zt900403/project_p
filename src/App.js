@@ -54,7 +54,7 @@ class App extends Component {
                     <MyNavbar />
                 </div>
                 <div className="App-body">
-                    <MyWaterfall columnNum={4} images={images} />
+                    <MyWaterfall images={images} />
                 </div>
                 <p className="App-intro">
                 </p>

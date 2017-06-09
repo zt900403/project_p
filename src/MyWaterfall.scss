@@ -1,6 +1,7 @@
 .waterfall-container {
   position: relative;
   margin: 0 auto;
+
   &:after {
     content: " ";
     visibility: hidden;
@@ -10,10 +11,17 @@
   }
   .image-container {
     position: absolute;
-    overflow: hidden;
+    transition: background-color .8s ease, left .6s ease, top .6s ease;
+    border-radius: 6px;
+    cursor: zoom-in;
 
-    .waterfall-img {
+    &:hover {
+      background-color: #F5F5F5;
+    }
+
+    .image-viewport {
       border-radius: 6px;
+      overflow: hidden;
     }
   }
 }

@@ -3,11 +3,15 @@
  */
 
 import React from 'react';
+import $ from 'jquery';
 import './MyWaterfall.css'
+
+
 export default class MyWaterfall extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            waterfallContainerW: 0,
             imageStyles: [],
             imageFinishLoad: false
         }
@@ -21,19 +25,19 @@ export default class MyWaterfall extends React.Component {
     render() {
         if (this.state.imageFinishLoad) {
             return (
-                <div className="waterfall-container">
+                <div className="waterfall-container" style={{width: this.state.waterfallContainerW}} >
                     {this.props.images.map(
                         function (image, i) {
                             let len = this.state.imageStyles.length;
                             if (i < len) {
                                 let style = this.state.imageStyles[i];
                                 return (
-                                    <div key={i} style={{float: 'left'}}>
-                                        <div className="image-container" style={style}>
-                                            <img className="waterfall-img" src={this.props.images[i].image}
-                                                 alt={this.props.images[i].image}></img>
+                                        <div key={i} className="image-container" style={style}>
+                                            <div className="image-viewport" style={{height: style.height - 20}}>
+                                                <img src={this.props.images[i].image}
+                                                     alt={this.props.images[i].image}></img>
+                                            </div>
                                         </div>
-                                    </div>
                                 );
                             }
                         }.bind(this)
@@ -55,10 +59,11 @@ export default class MyWaterfall extends React.Component {
         window.removeEventListener('resize', this._update.bind(this));
     }
 
+    getArraryMinIndex(array) {
+        return array.indexOf(Math.min.apply(null, array));
+    }
     _update() {
         var imageStyles = [];
-        var cols = this.props.columnNum;
-        var columnYs = Array(cols).fill(0);
         var imageContainerW = 256;
         var imageContainerH = 848;
         var marginLeft = this.props.marginLeft || 10;
@@ -69,12 +74,15 @@ export default class MyWaterfall extends React.Component {
         var paddingRight = this.props.paddingRight || 10;
         var paddingTop = this.props.paddingTop || 10;
         var paddingBottom = this.props.paddingBottom || 10;
+        var cols = Math.floor($(window).width() / (imageContainerW + marginLeft + marginRight))
+        var columnYs = Array(cols).fill(0);
 
+        var renderedIndex = -1;
         this.props.images.map(function (image, index) {
             let imgtemp = new Image();
             imgtemp.src = image.image;
             imgtemp.onload = function () {
-                let col = index % cols;
+                let col = this.getArraryMinIndex(columnYs);
                 var currentX = Math.ceil((marginLeft*2 + marginRight + imageContainerW) * col);
                 let containerHeight = Math.ceil(imgtemp.height + paddingTop + paddingBottom);
                 let realHeight = containerHeight <= imageContainerH ? containerHeight : imageContainerH;
@@ -92,10 +100,12 @@ export default class MyWaterfall extends React.Component {
                     paddingBottom: paddingBottom
                 };
                 columnYs[col] += Math.ceil(realHeight + marginTop + marginBottom*2);
-                if (index === this.props.images.length - 1) {
+                ++renderedIndex;
+                if (renderedIndex === this.props.images.length - 1) {
                     this.setState({
                         imageStyles: imageStyles,
-                        imageFinishLoad: true
+                        imageFinishLoad: true,
+                        waterfallContainerW: (imageContainerW + marginLeft + marginRight) * cols,
                     });
                 }
             }.bind(this);
