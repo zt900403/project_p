@@ -55,7 +55,7 @@ class App extends Component {
     requestMoreImage() {
 
         var images = this.state.images.slice();
-        var images = images.concat(images);
+        images = images.concat(images);
         this.setState({
            images: images,
         });
