@@ -4,9 +4,8 @@ import MyNavbar from './MyNavbar';
 import MyWaterfall from './MyWaterfall';
 
 class App extends Component {
-
-
-    render() {
+    constructor(props) {
+        super(props);
         var images = [
             {
                 image: "https://s-media-cache-ak0.pinimg.com/236x/0f/b9/ac/0fb9acbbfcda88df21a9097072b51a23.jpg"
@@ -48,13 +47,28 @@ class App extends Component {
                 image: "https://s-media-cache-ak0.pinimg.com/236x/3e/e4/61/3ee46172cdb8a18242277a757bf8790a.jpg",
             },
         ];
+        this.state = {
+            images: images,
+        }
+    }
+
+    requestMoreImage() {
+
+        var images = this.state.images.slice();
+        var images = images.concat(images);
+        this.setState({
+           images: images,
+        });
+    }
+
+    render() {
         return (
             <div className="App">
                 <div className="App-header">
                     <MyNavbar />
                 </div>
                 <div className="App-body">
-                    <MyWaterfall images={images} />
+                    <MyWaterfall images={this.state.images} handleScroll={() => this.requestMoreImage()} />
                 </div>
                 <p className="App-intro">
                 </p>

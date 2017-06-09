@@ -14,7 +14,8 @@ export default class MyWaterfall extends React.Component {
             waterfallContainerW: 0,
             imageStyles: [],
             imageFinishLoad: false
-        }
+        };
+        this.lastBoxHeight = 0;
     }
 
     componentWillMount() {
@@ -25,10 +26,11 @@ export default class MyWaterfall extends React.Component {
     render() {
         if (this.state.imageFinishLoad) {
             return (
-                <div className="waterfall-container" style={{width: this.state.waterfallContainerW}} >
+                <div className="waterfall-container" style={{width: this.state.waterfallContainerW}}
+                    ref={waterContainer => this.waterContainer = waterContainer}>
                     {this.props.images.map(
                         function (image, i) {
-                            let len = this.state.imageStyles.length;
+                            let len = this.props.images.length;
                             if (i < len) {
                                 let style = this.state.imageStyles[i];
                                 return (
@@ -51,12 +53,19 @@ export default class MyWaterfall extends React.Component {
         }
     }
 
+    handleScroll() {
+        var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        console.log(scrollTop);
+    }
+
     componentDidMount() {
         window.addEventListener('resize', this._update.bind(this));
+        window.addEventListener('scroll', this.handleScroll.bind(this));
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this._update.bind(this));
+        window.removeEventListener('scroll', this.handleScroll.bind(this));
     }
 
     getArraryMinIndex(array) {
@@ -102,6 +111,7 @@ export default class MyWaterfall extends React.Component {
                 columnYs[col] += Math.ceil(realHeight + marginTop + marginBottom*2);
                 ++renderedIndex;
                 if (renderedIndex === this.props.images.length - 1) {
+                    this.lastBoxHeight = Math.floor((columnYs[col] - (realHeight + marginTop + marginBottom*2)/ 2));
                     this.setState({
                         imageStyles: imageStyles,
                         imageFinishLoad: true,
