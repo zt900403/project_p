@@ -10,34 +10,36 @@ import './MyWaterfall.css'
 export default class MyWaterfall extends React.Component {
     constructor(props) {
         super(props);
+        /*
         this.state = {
-            waterfallContainerW: 0,
             imageStyles: [],
-            imageFinishLoad: false
+            waterfallContainerW: 0
         };
-        this.lastBoxHeight = 0;
+        */
     }
 
+    /*
     componentWillMount() {
         this._update();
     }
-
+    */
 
     render() {
-        if (this.state.imageFinishLoad) {
+        var mystyles = this._update();
+        if (this.props.images.length) {
             return (
-                <div className="waterfall-container" style={{width: this.state.waterfallContainerW}}
-                    ref={waterContainer => this.waterContainer = waterContainer}>
+                <div className="waterfall-container" style={{width: mystyles.waterfallContainerW}}
+                    >
                     {this.props.images.map(
                         function (image, i) {
-                            let len = this.props.images.length;
+                            let len = mystyles.imageStyles.length;
                             if (i < len) {
-                                let style = this.state.imageStyles[i];
+                                let style = mystyles.imageStyles[i];
                                 return (
                                         <div key={i} className="image-container" style={style}>
                                             <div className="image-viewport" style={{height: style.height - 20}}>
-                                                <img src={this.props.images[i].image}
-                                                     alt={this.props.images[i].image}></img>
+                                                <img src={this.props.images[i].imageUrl}
+                                                     alt={this.props.images[i].imageUrl}></img>
                                             </div>
                                         </div>
                                 );
@@ -51,26 +53,44 @@ export default class MyWaterfall extends React.Component {
                 <div></div>
             );
         }
+
     }
 
     handleScroll() {
         var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-        console.log(scrollTop);
+        console.log('scrollTop = ' + scrollTop);
+        console.log('this.requestMoreImgPoint = ' + this.requestMoreImgPoint);
+        if (scrollTop > this.requestMoreImgPoint) {
+            this.props.handleScroll();
+        }
+    }
+
+    handleResize(){
+        this.setState({});
     }
 
     componentDidMount() {
-        window.addEventListener('resize', this._update.bind(this));
+        //window.addEventListener('resize', this._update.bind(this));
+        //window.addEventListener('resize', this.render.bind(this));
+        window.addEventListener('resize', this.handleResize.bind(this));
         window.addEventListener('scroll', this.handleScroll.bind(this));
     }
 
     componentWillUnmount() {
-        window.removeEventListener('resize', this._update.bind(this));
+        //window.removeEventListener('resize', this._update.bind(this));
+        //window.removeEventListener('resize', this.render.bind(this));
+        window.removeEventListener('resize', this.handleResize.bind(this));
         window.removeEventListener('scroll', this.handleScroll.bind(this));
     }
 
-    getArraryMinIndex(array) {
+    getArrayMinIndex(array) {
         return array.indexOf(Math.min.apply(null, array));
     }
+
+    getArrayMinVal(array) {
+        return Math.min.apply(null, array);
+    }
+
     _update() {
         var imageStyles = [];
         var imageContainerW = 256;
@@ -83,42 +103,70 @@ export default class MyWaterfall extends React.Component {
         var paddingRight = this.props.paddingRight || 10;
         var paddingTop = this.props.paddingTop || 10;
         var paddingBottom = this.props.paddingBottom || 10;
-        var cols = Math.floor($(window).width() / (imageContainerW + marginLeft + marginRight))
+
+        var cols = Math.floor($(window).width() / (imageContainerW + marginLeft + marginRight));
         var columnYs = Array(cols).fill(0);
 
-        var renderedIndex = -1;
+        /*
         this.props.images.map(function (image, index) {
-            let imgtemp = new Image();
-            imgtemp.src = image.image;
-            imgtemp.onload = function () {
-                let col = this.getArraryMinIndex(columnYs);
-                var currentX = Math.ceil((marginLeft*2 + marginRight + imageContainerW) * col);
-                let containerHeight = Math.ceil(imgtemp.height + paddingTop + paddingBottom);
-                let realHeight = containerHeight <= imageContainerH ? containerHeight : imageContainerH;
-                imageStyles[index] = {
-                    left: currentX,
-                    top: columnYs[col],
-                    height: realHeight,
-                    marginLeft: marginLeft,
-                    marginRight: marginRight,
-                    marginTop: marginTop,
-                    marginBottom: marginBottom,
-                    paddingLeft: paddingLeft,
-                    paddingRight: paddingRight,
-                    paddingTop: paddingTop,
-                    paddingBottom: paddingBottom
-                };
-                columnYs[col] += Math.ceil(realHeight + marginTop + marginBottom*2);
-                ++renderedIndex;
-                if (renderedIndex === this.props.images.length - 1) {
-                    this.lastBoxHeight = Math.floor((columnYs[col] - (realHeight + marginTop + marginBottom*2)/ 2));
-                    this.setState({
-                        imageStyles: imageStyles,
-                        imageFinishLoad: true,
-                        waterfallContainerW: (imageContainerW + marginLeft + marginRight) * cols,
-                    });
-                }
-            }.bind(this);
+            let col = this.getArrayMinIndex(columnYs);
+            var currentX = Math.ceil((marginLeft*2 + marginRight + imageContainerW) * col);
+            let containerHeight = Math.ceil(image.height + paddingTop + paddingBottom);
+            let realHeight = containerHeight <= imageContainerH ? containerHeight : imageContainerH;
+            imageStyles[index] = {
+                left: currentX,
+                top: columnYs[col],
+                height: realHeight,
+                marginLeft: marginLeft,
+                marginRight: marginRight,
+                marginTop: marginTop,
+                marginBottom: marginBottom,
+                paddingLeft: paddingLeft,
+                paddingRight: paddingRight,
+                paddingTop: paddingTop,
+                paddingBottom: paddingBottom
+            };
+            columnYs[col] += Math.ceil(realHeight + marginTop + marginBottom*2);
+
         }.bind(this));
+        */
+
+        for (var i = 0, len = this.props.images.length; i < len; ++i) {
+
+            let image = this.props.images[i];
+            let col = this.getArrayMinIndex(columnYs);
+            var currentX = Math.ceil((marginLeft*2 + marginRight + imageContainerW) * col);
+
+            let containerHeight = Math.ceil(image.height + paddingTop + paddingBottom);
+            let realHeight = containerHeight <= imageContainerH ? containerHeight : imageContainerH;
+            imageStyles[i] = {
+                left: currentX,
+                top: columnYs[col],
+                height: realHeight,
+                marginLeft: marginLeft,
+                marginRight: marginRight,
+                marginTop: marginTop,
+                marginBottom: marginBottom,
+                paddingLeft: paddingLeft,
+                paddingRight: paddingRight,
+                paddingTop: paddingTop,
+                paddingBottom: paddingBottom
+            };
+            columnYs[col] += Math.ceil(realHeight + marginTop + marginBottom*2);
+
+        }
+
+        this.requestMoreImgPoint = this.getArrayMinVal(columnYs) - 400;
+        /*
+        this.setState({
+            imageStyles: imageStyles,
+            waterfallContainerW: (imageContainerW + marginLeft + marginRight) * cols
+        })
+        */
+        return {
+            imageStyles: imageStyles,
+            waterfallContainerW: (imageContainerW + marginLeft + marginRight) * cols
+        }
     }
+
 }
